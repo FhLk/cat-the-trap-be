@@ -1,11 +1,16 @@
 package service
 
 import (
+	"cat-the-trap-back-end/Algorithm"
 	"errors"
 	"fmt"
 	"math/rand"
 	"sort"
 )
+
+var hexagonNormal string = "./hexagon-pre-test.svg"
+var path []map[string]interface{}
+var end map[string]interface{}
 
 func generateBoard() [][]map[string]interface{} {
 	board := make([][]map[string]interface{}, 11)
@@ -13,10 +18,11 @@ func generateBoard() [][]map[string]interface{} {
 		board[i] = make([]map[string]interface{}, 11)
 		for j := 0; j < 11; j++ {
 			board[i][j] = map[string]interface{}{
-				"x":     i,
-				"y":     j,
-				"block": false,
-				"cat":   false,
+				"x":       i,
+				"y":       j,
+				"hexagon": hexagonNormal,
+				"block":   false,
+				"cat":     false,
 			}
 		}
 	}
@@ -50,6 +56,7 @@ func divideBoardIntoFour(gameBoard [][]map[string]interface{}) ([][][]map[string
 }
 
 func randomBlock(Q [][][]map[string]interface{}, level int) []map[string]interface{} {
+	var hexagonDisable = []string{"./candy1.svg", "./candy2.svg", "./candy3.svg", "./candy4.svg", "./candy5.svg", "./candy6.svg", "./candy7.svg"}
 	var blocks []map[string]interface{}
 	var countBlocks int
 	switch level {
@@ -69,6 +76,7 @@ func randomBlock(Q [][][]map[string]interface{}, level int) []map[string]interfa
 			row := rand.Intn(len(part))
 			col := rand.Intn(len(part[0]))
 			block := part[row][col]
+			block["hexagon"] = hexagonDisable[rand.Intn(len(hexagonDisable))]
 			block["block"] = true
 			partBlocks = append(partBlocks, block)
 		}
@@ -113,7 +121,7 @@ func Destination(gameBoard [][]map[string]interface{}) []map[string]interface{} 
 	return destination
 }
 
-func GameSetup() ([][]map[string]interface{}, []map[string]interface{}, map[string]interface{}, error) {
+func GameSetup() [][]map[string]interface{} {
 	// Generate game board
 	gameBoard := generateBoard()
 
@@ -123,17 +131,19 @@ func GameSetup() ([][]map[string]interface{}, []map[string]interface{}, map[stri
 	// Divide game board into four quadrants
 	Q, err := divideBoardIntoFour(gameBoard)
 	if err != nil {
-		return nil, nil, nil, nil
+		return nil
 	}
 
 	// Generate blocks for quadrants
-	block := randomBlock(Q, 1)
+	randomBlock(Q, 1)
 
 	// Set of destinations
 	setDestination := Destination(gameBoard)
 
 	// Choose a random destination
 	destination := setDestination[rand.Intn(len(setDestination))]
-
-	return gameBoard, block, destination, nil
+	start := gameBoard[5][5]
+	end = gameBoard[destination["x"].(int)][destination["y"].(int)]
+	path = Algorithm.AStar(start, end, gameBoard)
+	return gameBoard
 }

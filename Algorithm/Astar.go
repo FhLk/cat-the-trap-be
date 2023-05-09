@@ -39,7 +39,7 @@ func heuristic(a, b Node) int {
 	return int(math.Abs(float64(a.x-b.x)) + math.Abs(float64(a.y-b.y)))
 }
 
-func AStar(startNode, endNode map[string]interface{}, gameBoard [][]map[string]interface{}) []Node {
+func AStar(startNode, endNode map[string]interface{}, gameBoard [][]map[string]interface{}) []map[string]interface{} {
 	start := Node{
 		x: startNode["x"].(int),
 		y: startNode["y"].(int),
@@ -66,9 +66,16 @@ func AStar(startNode, endNode map[string]interface{}, gameBoard [][]map[string]i
 			}
 		}
 		if current == end {
-			path := []Node{end}
+			p := []Node{end}
+
 			for pathNode := end; pathNode != start; pathNode = cameFrom[pathNode] {
-				path = append([]Node{cameFrom[pathNode]}, path...)
+				p = append([]Node{cameFrom[pathNode]}, p...)
+			}
+			path := make([]map[string]interface{}, len(p))
+			for i := range path {
+				path[i] = make(map[string]interface{})
+				path[i]["x"] = p[i].x
+				path[i]["y"] = p[i].y
 			}
 			return path
 		}
@@ -94,5 +101,5 @@ func AStar(startNode, endNode map[string]interface{}, gameBoard [][]map[string]i
 			openSet = append(openSet, nb)
 		}
 	}
-	return []Node{}
+	return []map[string]interface{}{}
 }

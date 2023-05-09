@@ -1,29 +1,28 @@
 package main
 
 import (
-	"cat-the-trap-back-end/Algorithm"
-	"cat-the-trap-back-end/service"
-	"fmt"
+	"cat-the-trap-back-end/controller"
+	"cat-the-trap-back-end/midldleware"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	router := gin.Default()
 
-	board, _, _, _ := service.GameSetup()
-	start := board[5][5]
-	end := board[0][0]
-	path := Algorithm.AStar(start, end, board)
-	fmt.Println(path)
-	//router := gin.Default()
-	//config := cors.DefaultConfig()
-	//config.AllowOrigins = []string{"http://localhost:5173"}
-	//config.AllowHeaders = []string{"Origin, X-Requested-With, Content-Type, Accept"}
-	//config.AllowMethods = []string{"GET, POST, PUT, DELETE, OPTIONS"}
-	//router.Use(cors.New(config))
-	//
-	//router.POST("/api/authen", controller.Authen)
-	//protected := router.Group("/", midldleware.Authentication)
-	//protected.GET("/api/setup", controller.Setup)
-	////protected.GET("/api/albums/:id", controller.GetAlbumByID)
-	//
-	//router.Run("localhost:8080")
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+	config.AllowHeaders = []string{"Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+
+	router.Use(cors.New(config))
+
+	router.POST("/api/authen", controller.Authen)
+
+	protected := router.Group("/", midldleware.Authentication)
+	protected.POST("/api/setup", controller.Setup)
+	protected.POST("/api/play", controller.Play)
+	protected.POST("/api/reset", controller.Reset)
+
+	router.Run("192.168.1.58:8080")
 }
