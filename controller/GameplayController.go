@@ -10,6 +10,7 @@ type playBody struct {
 	Turn  int    `json:"turn"`
 	X     int    `json:"x"`
 	Y     int    `json:"y"`
+	Block string `json:"block"`
 	Token string `json:"token"`
 }
 
@@ -31,12 +32,17 @@ func Play(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
+
 	if !(getBody.Turn > turn && getBody.Turn < turn+2) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 	turn = getBody.Turn
-	board, newToken := service.UpdateBoard(getBody.X, getBody.Y, turn, board)
+	board, newToken := service.UpdateBoard(getBody.X, getBody.Y, turn, getBody.Block, board)
+	if board == nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
 	token = newToken
 	c.JSON(http.StatusOK, gin.H{
 		"board": board,
