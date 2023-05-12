@@ -11,6 +11,7 @@ import (
 var hexagonNormal string = "./hexagon-pre-test.svg"
 var path []map[string]interface{}
 var end map[string]interface{}
+var setDestination []map[string]interface{}
 
 func generateBoard() [][]map[string]interface{} {
 	board := make([][]map[string]interface{}, 11)
@@ -92,13 +93,13 @@ func randomBlock(Q [][][]map[string]interface{}, level int) []map[string]interfa
 
 func Destination(gameBoard [][]map[string]interface{}) []map[string]interface{} {
 	BOARD_SIZE := len(gameBoard[0])
-	setDestination := make([]map[string]interface{}, 0)
+	var set = make([]map[string]interface{}, 0)
 	for i := 0; i < BOARD_SIZE; i++ {
-		setDestination = append(setDestination, gameBoard[0][i], gameBoard[i][0], gameBoard[BOARD_SIZE-1][i], gameBoard[i][BOARD_SIZE-1])
+		set = append(set, gameBoard[0][i], gameBoard[i][0], gameBoard[BOARD_SIZE-1][i], gameBoard[i][BOARD_SIZE-1])
 	}
 
 	uniqueDestinations := make(map[string]map[string]interface{})
-	for _, dest := range setDestination {
+	for _, dest := range set {
 		uniqueDestinations[fmt.Sprintf("%v", dest)] = dest
 	}
 
@@ -121,7 +122,7 @@ func Destination(gameBoard [][]map[string]interface{}) []map[string]interface{} 
 	return destination
 }
 
-func GameSetup() [][]map[string]interface{} {
+func GameSetup(level int) [][]map[string]interface{} {
 	// Generate game board
 	gameBoard := generateBoard()
 
@@ -135,10 +136,10 @@ func GameSetup() [][]map[string]interface{} {
 	}
 
 	// Generate blocks for quadrants
-	randomBlock(Q, 1)
+	randomBlock(Q, level)
 
 	// Set of destinations
-	setDestination := Destination(gameBoard)
+	setDestination = Destination(gameBoard)
 
 	// Choose a random destination
 	destination := setDestination[rand.Intn(len(setDestination))]

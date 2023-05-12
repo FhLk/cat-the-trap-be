@@ -12,6 +12,7 @@ type playBody struct {
 	Y     int    `json:"y"`
 	Block string `json:"block"`
 	Token string `json:"token"`
+	Level int    `json:"level"`
 }
 
 var turn int = 0
@@ -38,26 +39,30 @@ func Play(c *gin.Context) {
 		return
 	}
 	turn = getBody.Turn
-	board, newToken := service.UpdateBoard(getBody.X, getBody.Y, turn, getBody.Block, board)
-	if board == nil {
+	board, newToken, err := service.UpdateBoard(getBody.X, getBody.Y, turn, getBody.Block, board)
+	if board != nil && err == nil && newToken == "" {
+		c.JSON(http.StatusOK, gin.H{
+			"board":   board,
+			"turn":    turn,
+			"token":   token,
+			"canPlay": false,
+			"level":   getBody.Level,
+		})
+		return
+	} else if board == nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	} else if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
+
 	token = newToken
 	c.JSON(http.StatusOK, gin.H{
-		"board": board,
-		"turn":  turn,
-		"token": token,
-	})
-}
-
-func Reset(c *gin.Context) {
-	board = service.ResetBoard()
-	turn = 0
-	token = "TokenCheck00"
-	c.JSON(http.StatusOK, gin.H{
-		"board": board,
-		"turn":  0,
-		"token": "TokenCheck00",
+		"board":   board,
+		"turn":    turn,
+		"token":   token,
+		"canPlay": true,
+		"level":   getBody.Level,
 	})
 }

@@ -7,7 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func divide(x, y float64) float64 {
+	if y == 0 {
+		// Trigger a runtime error if y is zero
+		panic("cannot divide by zero")
+	}
+	return x / y
+}
+
 func main() {
+	//result := divide(10, 0)
+	//fmt.Println(result)
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
@@ -23,6 +33,8 @@ func main() {
 	protected.POST("/api/setup", controller.Setup)
 	protected.POST("/api/play", controller.Play)
 	protected.POST("/api/reset", controller.Reset)
+	//protected.POST("/api/win", controller.Win)
+	//protected.POST("/api/lose", controller.Lose)
 
 	router.Run("192.168.1.58:8080")
 }
