@@ -2,7 +2,6 @@ package controller
 
 import (
 	"cat-the-trap-back-end/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -20,13 +19,18 @@ func Setup(c *gin.Context) {
 		return
 	}
 
-	if c.Request.ContentLength == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
-		return
-	}
+	//if getBody.Level == 0 {
+	//	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+	//	return
+	//}
 
 	if getBody.Level >= 4 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if c.Request.ContentLength == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
 		return
 	}
 	board = service.GameSetup(getBody.Level)
@@ -46,7 +50,6 @@ func Reset(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-	fmt.Println(getBody.Level)
 
 	if getBody.Level >= 4 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})

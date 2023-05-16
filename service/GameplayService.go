@@ -34,13 +34,17 @@ func ResetBoard(level int) [][]map[string]interface{} {
 func CatMove(board [][]map[string]interface{}) bool {
 	currentMove := board[path[0]["x"].(int)][path[0]["y"].(int)]
 	path = Algorithm.AStar(currentMove, end, board)
-	if len(path) < 5 {
+	if len(path) == 0 {
+		end = CloseCat(currentMove, board)
+		path = Algorithm.AStar(currentMove, end, board)
+	} else if len(path) < 5 {
 		end = CloseCat(currentMove, board)
 		path = Algorithm.AStar(currentMove, end, board)
 	} else if len(path) > 7 {
 		end = CloseCat(currentMove, board)
 		path = Algorithm.AStar(currentMove, end, board)
 	}
+
 	if len(path) != 0 {
 		previousMove := board[path[0]["x"].(int)][path[0]["y"].(int)]
 		previousMove["hexagon"] = hexagonNormal

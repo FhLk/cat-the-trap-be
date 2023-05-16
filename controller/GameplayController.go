@@ -2,6 +2,7 @@ package controller
 
 import (
 	"cat-the-trap-back-end/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -25,10 +26,6 @@ func Play(c *gin.Context) {
 		return
 	}
 
-	if c.Request.ContentLength == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
-		return
-	}
 	if getBody.Token != token {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
@@ -36,6 +33,17 @@ func Play(c *gin.Context) {
 
 	if !(getBody.Turn > turn && getBody.Turn < turn+2) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if getBody.Level == 0 {
+		fmt.Println("wow")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if c.Request.ContentLength == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
 		return
 	}
 	turn = getBody.Turn
