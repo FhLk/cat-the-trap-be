@@ -26,6 +26,19 @@ func UpdateBoard(x, y, turn int, block string, board [][]map[string]interface{})
 	return gameBoard, newToken, nil
 }
 
+func TimeOut(turn int, board [][]map[string]interface{}) ([][]map[string]interface{}, string, error) {
+	gameBoard := board
+	newToken := fmt.Sprintf("TokenCheck0%d", turn)
+	if !CatMove(gameBoard) {
+		if len(path) == 0 {
+			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
+			return gameBoard, newToken, nil
+		}
+		return gameBoard, "", nil
+	}
+	return gameBoard, newToken, nil
+}
+
 func ResetBoard(level int) [][]map[string]interface{} {
 	gameBoard := GameSetup(level)
 	return gameBoard

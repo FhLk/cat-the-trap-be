@@ -14,15 +14,12 @@ var board [][]map[string]interface{}
 
 func Setup(c *gin.Context) {
 	var getBody SetupBody
+	turn = 0
+	token = "TokenCheck00"
 	if err := c.BindJSON(&getBody); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-
-	//if getBody.Level == 0 {
-	//	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
-	//	return
-	//}
 
 	if getBody.Level >= 4 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -38,6 +35,7 @@ func Setup(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"board":   board,
 		"turn":    0,
+		"timeOut": false,
 		"token":   "TokenCheck00",
 		"canPlay": true,
 		"level":   getBody.Level,
@@ -61,6 +59,7 @@ func Reset(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"board":   board,
 		"turn":    0,
+		"timeOut": false,
 		"token":   "TokenCheck00",
 		"canPlay": true,
 		"level":   getBody.Level,
