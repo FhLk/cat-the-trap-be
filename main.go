@@ -26,7 +26,6 @@ func main() {
 	protected.POST("/api/play", controller.Play)
 	protected.POST("/api/reset", controller.Reset)
 	protected.POST("/api/time", controller.Time)
-	//protected.POST("/api/lose", controller.Lose)
 
 	router.Run("192.168.1.232:8080")
 }

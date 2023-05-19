@@ -44,7 +44,6 @@ func Play(c *gin.Context) {
 	}
 
 	if getBody.Level == 0 {
-		fmt.Println("wow")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
