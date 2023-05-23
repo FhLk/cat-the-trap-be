@@ -146,5 +146,6 @@ func GameSetup(level int) [][]map[string]interface{} {
 	start := gameBoard[5][5]
 	end = gameBoard[destination["x"].(int)][destination["y"].(int)]
 	path = Algorithm.AStar(start, end, gameBoard)
+
 	return gameBoard
 }

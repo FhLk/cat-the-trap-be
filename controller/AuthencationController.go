@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,6 +15,32 @@ func generateToken() string {
 }
 
 func Authen(c *gin.Context) {
+	// Access the session
+	session := sessions.Default(c)
+
+	// Set a session value
+	session.Set("key", "value")
+
+	// Save the session
+	err := session.Save()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
+		return
+	}
+
+	// Delete a session value
+	session.Delete("key")
+
+	// Clear all session values
+	session.Clear()
+
+	// Save the session after making changes
+	err = session.Save()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
+		return
+	}
+
 	var getBody AuthenBody
 	if err := c.BindJSON(&getBody); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -33,4 +60,8 @@ func Authen(c *gin.Context) {
 
 	key := generateToken()
 	c.JSON(http.StatusCreated, gin.H{"code": "201", "message": "success", "token": key})
+}
+
+func Sessions(c *gin.Context) {
+
 }

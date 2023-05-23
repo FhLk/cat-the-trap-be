@@ -4,12 +4,12 @@ import (
 	"cat-the-trap-back-end/controller"
 	"cat-the-trap-back-end/midldleware"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//result := divide(10, 0)
-	//fmt.Println(result)
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
@@ -19,6 +19,9 @@ func main() {
 
 	router.Use(cors.New(config))
 
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("mysession", store))
+
 	router.POST("/api/authen", controller.Authen)
 
 	protected := router.Group("/", midldleware.Authentication)
@@ -27,5 +30,6 @@ func main() {
 	protected.POST("/api/reset", controller.Reset)
 	protected.POST("/api/time", controller.Time)
 
-	router.Run("0.0.0.0:3051")
+	router.Run("192.168.1.232:8080")
+	//router.Run("0.0.0.0:3051")
 }

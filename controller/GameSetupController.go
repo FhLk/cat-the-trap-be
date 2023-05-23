@@ -32,6 +32,8 @@ func Setup(c *gin.Context) {
 	}
 	board = service.GameSetup(getBody.Level)
 
+	service.StartSession(board, getBody.Level)
+
 	c.JSON(http.StatusOK, gin.H{
 		"board":   board,
 		"turn":    0,
