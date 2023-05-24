@@ -9,9 +9,10 @@ import (
 )
 
 var hexagonNormal string = "./hexagon-pre-test.svg"
-var path []map[string]interface{}
-var end map[string]interface{}
-var setDestination []map[string]interface{}
+
+//var path []map[string]interface{}
+//var end map[string]interface{}
+//var setDestination []map[string]interface{}
 
 func generateBoard() [][]map[string]interface{} {
 	board := make([][]map[string]interface{}, 11)
@@ -122,7 +123,7 @@ func Destination(gameBoard [][]map[string]interface{}) []map[string]interface{} 
 	return destination
 }
 
-func GameSetup(level int) [][]map[string]interface{} {
+func GameSetup(level int) ([][]map[string]interface{}, []map[string]interface{}, map[string]interface{}, []map[string]interface{}) {
 	// Generate game board
 	gameBoard := generateBoard()
 
@@ -132,20 +133,20 @@ func GameSetup(level int) [][]map[string]interface{} {
 	// Divide game board into four quadrants
 	Q, err := divideBoardIntoFour(gameBoard)
 	if err != nil {
-		return nil
+		return nil, nil, nil, nil
 	}
 
 	// Generate blocks for quadrants
 	randomBlock(Q, level)
 
 	// Set of destinations
-	setDestination = Destination(gameBoard)
+	setDestination := Destination(gameBoard)
 
 	// Choose a random destination
 	destination := setDestination[rand.Intn(len(setDestination))]
 	start := gameBoard[5][5]
-	end = gameBoard[destination["x"].(int)][destination["y"].(int)]
-	path = Algorithm.AStar(start, end, gameBoard)
+	end := gameBoard[destination["x"].(int)][destination["y"].(int)]
+	path := Algorithm.AStar(start, end, gameBoard)
 
-	return gameBoard
+	return gameBoard, path,end,setDestination
 }

@@ -7,55 +7,59 @@ import (
 	"math"
 )
 
-func UpdateBoard(x, y, turn int, block string, board [][]map[string]interface{}) ([][]map[string]interface{}, string, error) {
+func UpdateBoard(x, y, turn int, block string, session *Session) ([][]map[string]interface{}, string, []map[string]interface{}, map[string]interface{}, error) {
 	hexagonDisable := []string{"./candy1.svg", "./candy2.svg", "./candy3.svg", "./candy4.svg", "./candy5.svg", "./candy6.svg", "./candy7.svg"}
 	if !isInArray(hexagonDisable, block) {
-		return nil, "", errors.New("something is wrong")
+		return nil, "", nil, nil, errors.New("something is wrong")
 	}
+	board := session.Board
+	path := session.Path
+	des := session.Destination
+	set := session.Set
 	board[x][y]["hexagon"] = block
 	board[x][y]["block"] = true
-	gameBoard := board
 	newToken := fmt.Sprintf("TokenCheck0%d", turn)
-	if !CatMove(gameBoard) {
+	move, newPath, newDes := CatMove(board, path, des, set)
+	if !move {
 		if len(path) == 0 {
 			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
-			return gameBoard, newToken, nil
+			return board, newToken, nil, nil, nil
 		}
-		return gameBoard, "", nil
+		return board, "", newPath, newDes, nil
 	}
-	return gameBoard, newToken, nil
+	return board, newToken, newPath, newDes, nil
 }
 
-func TimeOut(turn int, board [][]map[string]interface{}) ([][]map[string]interface{}, string, error) {
-	gameBoard := board
-	newToken := fmt.Sprintf("TokenCheck0%d", turn)
-	if !CatMove(gameBoard) {
-		if len(path) == 0 {
-			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
-			return gameBoard, newToken, nil
-		}
-		return gameBoard, "", nil
-	}
-	return gameBoard, newToken, nil
-}
+//func TimeOut(turn int, board [][]map[string]interface{}) ([][]map[string]interface{}, string, error) {
+//	gameBoard := board
+//	newToken := fmt.Sprintf("TokenCheck0%d", turn)
+//	if !CatMove(gameBoard, nil, nil) {
+//		if len(path) == 0 {
+//			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
+//			return gameBoard, newToken, nil
+//		}
+//		return gameBoard, "", nil
+//	}
+//	return gameBoard, newToken, nil
+//}
+//
+//func ResetBoard(level int) [][]map[string]interface{} {
+//	gameBoard, _, _, _ := GameSetup(level)
+//	return gameBoard
+//}
 
-func ResetBoard(level int) [][]map[string]interface{} {
-	gameBoard := GameSetup(level)
-	return gameBoard
-}
-
-func CatMove(board [][]map[string]interface{}) bool {
+func CatMove(board [][]map[string]interface{}, path []map[string]interface{}, des map[string]interface{}, set []map[string]interface{}) (bool, []map[string]interface{}, map[string]interface{}) {
 	currentMove := board[path[0]["x"].(int)][path[0]["y"].(int)]
-	path = Algorithm.AStar(currentMove, end, board)
+	path = Algorithm.AStar(currentMove, des, board)
 	if len(path) == 0 {
-		end = CloseCat(currentMove, board)
-		path = Algorithm.AStar(currentMove, end, board)
+		des = CloseCat(currentMove, board, set, des)
+		path = Algorithm.AStar(currentMove, des, board)
 	} else if len(path) < 5 {
-		end = CloseCat(currentMove, board)
-		path = Algorithm.AStar(currentMove, end, board)
+		des = CloseCat(currentMove, board, set, des)
+		path = Algorithm.AStar(currentMove, des, board)
 	} else if len(path) > 7 {
-		end = CloseCat(currentMove, board)
-		path = Algorithm.AStar(currentMove, end, board)
+		des = CloseCat(currentMove, board, set, des)
+		path = Algorithm.AStar(currentMove, des, board)
 	}
 
 	if len(path) != 0 {
@@ -66,25 +70,25 @@ func CatMove(board [][]map[string]interface{}) bool {
 		path = path[1:]
 		nextMove := board[path[0]["x"].(int)][path[0]["y"].(int)]
 		nextMove["cat"] = true
-		if CheckLoseGame(nextMove) {
-			return false
+		if CheckLoseGame(nextMove, set) {
+			return false, path, des
 		}
-		return true
+		return true, path, des
 	}
-	return false
+	return false, nil, nil
 }
 
-func CloseCat(currentCat map[string]interface{}, board [][]map[string]interface{}) map[string]interface{} {
+func CloseCat(currentCat map[string]interface{}, board [][]map[string]interface{}, set []map[string]interface{}, des map[string]interface{}) map[string]interface{} {
 	var filtered []map[string]interface{}
-	for _, n := range setDestination {
+	for _, n := range set {
 		if block, ok := n["block"].(bool); !ok || !block {
 			filtered = append(filtered, n)
 		}
 	}
-	setDestination = filtered
+	set = filtered
 	distance := math.Inf(1)
-	newDestination := end
-	for _, n := range setDestination {
+	newDestination := des
+	for _, n := range set {
 		newPath := Algorithm.AStar(currentCat, n, board)
 		if len(newPath) != 0 {
 			newPath = newPath[1:]
@@ -98,7 +102,6 @@ func CloseCat(currentCat map[string]interface{}, board [][]map[string]interface{
 			distance = float64(newPathLength)
 		}
 	}
-	fmt.Println(newDestination)
 	return newDestination
 }
 
@@ -111,8 +114,8 @@ func isInArray(arr []string, target string) bool {
 	return false
 }
 
-func CheckLoseGame(current map[string]interface{}) bool {
-	for _, value := range setDestination {
+func CheckLoseGame(current map[string]interface{}, set []map[string]interface{}) bool {
+	for _, value := range set {
 		if current["x"].(int) == value["x"].(int) && current["y"].(int) == value["y"].(int) {
 			return true
 		}
