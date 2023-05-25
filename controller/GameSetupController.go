@@ -7,7 +7,8 @@ import (
 )
 
 type SetupBody struct {
-	Level int `json:"level"`
+	SessionID string `json:"sessionID"`
+	Level     int    `json:"level"`
 }
 
 func Setup(c *gin.Context) {
@@ -40,26 +41,26 @@ func Setup(c *gin.Context) {
 	})
 }
 
-//func Reset(c *gin.Context) {
-//	var getBody SetupBody
-//	if err := c.BindJSON(&getBody); err != nil {
-//		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
-//		return
-//	}
-//
-//	if getBody.Level >= 4 {
-//		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
-//		return
-//	}
-//	board := service.ResetBoard(getBody.Level)
-//	//turn = 0
-//	//token = "TokenCheck00"
-//	c.JSON(http.StatusOK, gin.H{
-//		"board":   board,
-//		"turn":    0,
-//		"timeOut": false,
-//		"token":   "TokenCheck00",
-//		"canPlay": true,
-//		"level":   getBody.Level,
-//	})
-//}
+func Reset(c *gin.Context) {
+	var getBody SetupBody
+	if err := c.BindJSON(&getBody); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if getBody.Level >= 4 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+	service.EndSession(getBody.SessionID)
+	board, session := service.StartSession(getBody.Level)
+	c.JSON(http.StatusOK, gin.H{
+		"sessionID": session,
+		"board":     board,
+		"turn":      0,
+		"timeOut":   false,
+		"token":     "TokenCheck00",
+		"canPlay":   true,
+		"level":     getBody.Level,
+	})
+}
