@@ -6,19 +6,15 @@ import (
 )
 
 type Session struct {
-	ID     string
-	Board  [][]map[string]interface{}
-	Active bool
-	Turn   int
-	//TimeOut     bool
-	Token string
-	//CanPlay     bool
+	ID          string
+	Board       [][]map[string]interface{}
+	Active      bool
+	Turn        int
+	Token       string
 	Level       int
 	Path        []map[string]interface{}
 	Destination map[string]interface{}
 	Set         []map[string]interface{}
-
-	// Add more session-related data as needed
 }
 
 var sessions map[string]*Session
@@ -48,10 +44,8 @@ func StartSession(level int) ([][]map[string]interface{}, string) {
 }
 
 func generateUniqueToken() string {
-	// Generate a new UUID
 	uuid := uuid.New()
 
-	// Convert the UUID to a string representation
 	id := uuid.String()
 
 	return id

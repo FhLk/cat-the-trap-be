@@ -124,29 +124,23 @@ func Destination(gameBoard [][]map[string]interface{}) []map[string]interface{} 
 }
 
 func GameSetup(level int) ([][]map[string]interface{}, []map[string]interface{}, map[string]interface{}, []map[string]interface{}) {
-	// Generate game board
 	gameBoard := generateBoard()
 
-	// Add cat to game board
 	gameBoard[5][5]["cat"] = true
 
-	// Divide game board into four quadrants
 	Q, err := divideBoardIntoFour(gameBoard)
 	if err != nil {
 		return nil, nil, nil, nil
 	}
 
-	// Generate blocks for quadrants
 	randomBlock(Q, level)
-
-	// Set of destinations
+	
 	setDestination := Destination(gameBoard)
 
-	// Choose a random destination
 	destination := setDestination[rand.Intn(len(setDestination))]
 	start := gameBoard[5][5]
 	end := gameBoard[destination["x"].(int)][destination["y"].(int)]
 	path := Algorithm.AStar(start, end, gameBoard)
 
-	return gameBoard, path,end,setDestination
+	return gameBoard, path, end, setDestination
 }

@@ -9,7 +9,6 @@ import (
 
 func Authentication(c *gin.Context) {
 	s := c.Request.Header.Get("Authorization")
-	//body := c.Request.Body
 
 	token := strings.TrimPrefix(s, "Bearer ")
 
@@ -19,8 +18,6 @@ func Authentication(c *gin.Context) {
 		return
 	}
 }
-
-//TOKEN := "eyJhbGciOiJIUzI1NiJ9.eyJtb2JpbGVObyI6Im1wUTBSMTJHTzAzNmY4ckVCbmZqVTg4OWwyczNnZGlGQUVzcCtNRWUrNzQ9IiwidGltZXN0YW1wIjoiMjAyMi0wMS0xNFQxMzowMDowNSswNzowMCJ9.gUvmq2MI9DAa5-AgWAX8DE7tL2elCD7VW8g-2gtYz9g"
 
 func validateToken(token string) error {
 	TOKEN := "PASS"

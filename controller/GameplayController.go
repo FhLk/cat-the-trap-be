@@ -87,6 +87,7 @@ func Play(c *gin.Context) {
 func Time(c *gin.Context) {
 	var getBody timeBody
 	if err := c.BindJSON(&getBody); err != nil {
+		fmt.Println("wow1")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
@@ -95,11 +96,13 @@ func Time(c *gin.Context) {
 	token := fmt.Sprintf("TokenCheck0%d", turn)
 
 	if getBody.Token != token {
+		fmt.Println("wow2")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
 	if !(getBody.Turn > turn && getBody.Turn < turn+2) {
+		fmt.Println("wow3")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
@@ -126,9 +129,11 @@ func Time(c *gin.Context) {
 		})
 		return
 	} else if board == nil {
+		fmt.Println("wow4")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	} else if err != nil {
+		fmt.Println("wow5")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}

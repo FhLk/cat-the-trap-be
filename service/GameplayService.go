@@ -38,18 +38,13 @@ func TimeOut(turn int, session *Session) ([][]map[string]interface{}, string, []
 	newToken := fmt.Sprintf("TokenCheck0%d", turn)
 	move, newPath, newDes := CatMove(board, path, des, set)
 	if !move {
-		if len(path) == 0 {
+		if len(newPath) == 0 {
 			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
 			return board, newToken, nil, nil, nil
 		}
 		return board, "", newPath, newDes, nil
 	}
 	return board, newToken, newPath, newDes, nil
-}
-
-func ResetBoard(level int) ([][]map[string]interface{}, []map[string]interface{}, map[string]interface{}, []map[string]interface{}) {
-	gameBoard, path, end, set := GameSetup(level)
-	return gameBoard, path, end, set
 }
 
 func CatMove(board [][]map[string]interface{}, path []map[string]interface{}, des map[string]interface{}, set []map[string]interface{}) (bool, []map[string]interface{}, map[string]interface{}) {
