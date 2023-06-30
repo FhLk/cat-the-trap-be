@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,8 +12,15 @@ type AuthenBody struct {
 	Token string `json:"token"`
 }
 
-func generateToken() string {
-	return "PASS"
+func generateO(o string) string {
+	hash := sha256.New()
+
+	hash.Write([]byte(o))
+
+	checksum := hash.Sum(nil)
+
+	checksumStr := hex.EncodeToString(checksum)
+	return checksumStr
 }
 
 func Authen(c *gin.Context) {
@@ -40,6 +49,7 @@ func Authen(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
+
 	TOKEN := "eyJhbGciOiJIUzI1NiJ9.eyJtb2JpbGVObyI6Im1wUTBSMTJHTzAzNmY4ckVCbmZqVTg4OWwyczNnZGlGQUVzcCtNRWUrNzQ9IiwidGltZXN0YW1wIjoiMjAyMi0wMS0xNFQxMzowMDowNSswNzowMCJ9.gUvmq2MI9DAa5-AgWAX8DE7tL2elCD7VW8g-2gtYz9g"
 
 	if getBody.Token == "" {
@@ -52,6 +62,6 @@ func Authen(c *gin.Context) {
 		return
 	}
 
-	key := generateToken()
-	c.JSON(http.StatusCreated, gin.H{"code": "201", "message": "success", "token": key})
+	key := generateO(TOKEN)
+	c.JSON(http.StatusCreated, gin.H{"code": "201", "message": "success", "o": key})
 }

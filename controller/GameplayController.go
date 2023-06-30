@@ -32,9 +32,10 @@ func Play(c *gin.Context) {
 		return
 	}
 	turn := getBody.Turn - 1
-	token := fmt.Sprintf("TokenCheck0%d", turn)
+	o := fmt.Sprintf("0%d", turn)
+	token := hashToken("TokenCheck") + o
 
-	if getBody.Token != token {
+	if getBody.Token[:] != token {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
@@ -93,7 +94,8 @@ func Time(c *gin.Context) {
 	}
 
 	turn := getBody.Turn - 1
-	token := fmt.Sprintf("TokenCheck0%d", turn)
+	o := fmt.Sprintf("0%d", turn)
+	token := hashToken("TokenCheck") + o
 
 	if getBody.Token != token {
 		fmt.Println("wow2")

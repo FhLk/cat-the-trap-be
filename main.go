@@ -30,6 +30,5 @@ func main() {
 	protected.POST("/api/reset", controller.Reset)
 	protected.POST("/api/time", controller.Time)
 
-	router.Run("192.168.1.232:8080")
-	//router.Run("0.0.0.0:3051")
+	router.Run("192.168.1.235:8080")
 }

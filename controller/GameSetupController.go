@@ -2,6 +2,8 @@ package controller
 
 import (
 	"cat-the-trap-back-end/service"
+	"crypto/sha256"
+	"encoding/hex"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -35,7 +37,7 @@ func Setup(c *gin.Context) {
 		"board":     board,
 		"turn":      0,
 		"timeOut":   false,
-		"token":     "TokenCheck00",
+		"token":     hashToken("TokenCheck") + "00",
 		"canPlay":   true,
 		"level":     getBody.Level,
 	})
@@ -59,8 +61,19 @@ func Reset(c *gin.Context) {
 		"board":     board,
 		"turn":      0,
 		"timeOut":   false,
-		"token":     "TokenCheck00",
+		"token":     hashToken("TokenCheck") + "00",
 		"canPlay":   true,
 		"level":     getBody.Level,
 	})
+}
+
+func hashToken(o string) string {
+	hash := sha256.New()
+
+	hash.Write([]byte(o))
+
+	checksum := hash.Sum(nil)
+
+	checksumStr := hex.EncodeToString(checksum)
+	return checksumStr
 }

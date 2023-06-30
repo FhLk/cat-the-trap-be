@@ -10,10 +10,6 @@ import (
 
 var hexagonNormal string = "./hexagon-pre-test.svg"
 
-//var path []map[string]interface{}
-//var end map[string]interface{}
-//var setDestination []map[string]interface{}
-
 func generateBoard() [][]map[string]interface{} {
 	board := make([][]map[string]interface{}, 11)
 	for i := 0; i < 11; i++ {
@@ -134,7 +130,7 @@ func GameSetup(level int) ([][]map[string]interface{}, []map[string]interface{},
 	}
 
 	randomBlock(Q, level)
-	
+
 	setDestination := Destination(gameBoard)
 
 	destination := setDestination[rand.Intn(len(setDestination))]

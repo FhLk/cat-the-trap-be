@@ -1,6 +1,8 @@
 package service
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"github.com/google/uuid"
 )
@@ -98,4 +100,15 @@ func TimeOutSessions(id string, turn int) ([][]map[string]interface{}, string, e
 
 func EndSession(id string) {
 	delete(sessions, id)
+}
+
+func hashToken(o string) string {
+	hash := sha256.New()
+
+	hash.Write([]byte(o))
+
+	checksum := hash.Sum(nil)
+
+	checksumStr := hex.EncodeToString(checksum)
+	return checksumStr
 }

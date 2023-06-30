@@ -18,11 +18,13 @@ func UpdateBoard(x, y, turn int, block string, session *Session) ([][]map[string
 	set := session.Set
 	board[x][y]["hexagon"] = block
 	board[x][y]["block"] = true
-	newToken := fmt.Sprintf("TokenCheck0%d", turn)
+	o := fmt.Sprintf("0%d", turn)
+	newToken := hashToken("TokenCheck") + o
 	move, newPath, newDes := CatMove(board, path, des, set)
 	if !move {
 		if len(newPath) == 0 {
-			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
+			o = fmt.Sprintf("0%d", turn-1)
+			newToken = hashToken("TokenCheck") + o
 			return board, newToken, nil, nil, nil
 		}
 		return board, "", newPath, newDes, nil
@@ -35,11 +37,13 @@ func TimeOut(turn int, session *Session) ([][]map[string]interface{}, string, []
 	path := session.Path
 	des := session.Destination
 	set := session.Set
-	newToken := fmt.Sprintf("TokenCheck0%d", turn)
+	o := fmt.Sprintf("0%d", turn)
+	newToken := hashToken("TokenCheck") + o
 	move, newPath, newDes := CatMove(board, path, des, set)
 	if !move {
 		if len(newPath) == 0 {
-			newToken = fmt.Sprintf("TokenCheck0%d", turn-1)
+			o = fmt.Sprintf("0%d", turn-1)
+			newToken = hashToken("TokenCheck") + o
 			return board, newToken, nil, nil, nil
 		}
 		return board, "", newPath, newDes, nil
